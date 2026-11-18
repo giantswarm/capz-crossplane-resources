@@ -4,8 +4,7 @@
 # capz-crossplane-resources
 
 A Helm chart of Crossplane resources that every CAPZ management cluster needs. It is deployed by the CAPZ
-collection of [management-cluster-bases](https://github.com/giantswarm/management-cluster-bases) and renders
-nothing unless `enabled` is `true`.
+collection of [management-cluster-bases](https://github.com/giantswarm/management-cluster-bases).
 
 ## Resources
 
@@ -25,7 +24,6 @@ The chart's values are documented in [helm/capz-crossplane-resources/README.md](
 On a management cluster:
 
 ```yaml
-enabled: true
 managementCluster: <codename>
 ```
 

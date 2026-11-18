@@ -54,7 +54,7 @@
         },
         "enabled": {
             "type": "boolean",
-            "description": "Render the chart's resources. They need Crossplane's Azure provider, which only CAPZ management clusters run, so the chart renders nothing unless this is `true`."
+            "description": "Render the chart's resources. They need Crossplane's Azure provider, which only CAPZ management clusters run."
         },
         "externalDNSIP": {
             "type": "string"

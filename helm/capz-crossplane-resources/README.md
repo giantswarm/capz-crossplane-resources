@@ -12,7 +12,7 @@ Crossplane resources for CAPZ management clusters, such as an observe-only view 
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| enabled | bool | `false` | Render the chart's resources. They need Crossplane's Azure provider, which only CAPZ management clusters run, so the chart renders nothing unless this is `true`. |
+| enabled | bool | `true` | Render the chart's resources. They need Crossplane's Azure provider, which only CAPZ management clusters run. |
 | managementCluster | string | `""` | Name of the management cluster. The CAPZ identity's resource group and name and the Crossplane Azure ProviderConfig default to it. Required when `enabled` is `true`. |
 | providerConfigName | string | `""` | Name of the Crossplane Azure ProviderConfig the resources use. Defaults to `managementCluster`. |
 | capzIdentity.subscriptionId | string | `""` | Azure subscription ID that holds the CAPZ identity. Defaults to `spec.subscriptionID` of the AzureCluster `org-giantswarm/<managementCluster>`. |

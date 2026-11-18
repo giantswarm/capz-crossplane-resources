@@ -2,14 +2,15 @@ suite: CAPZ identity
 templates:
   - templates/capz-identity.yaml
 tests:
-  - it: renders nothing by default
+  - it: renders nothing when disabled
+    set:
+      enabled: false
     asserts:
       - hasDocuments:
           count: 0
 
   - it: observes the CAPZ identity of the management cluster
     set:
-      enabled: true
       managementCluster: mymc
       capzIdentity.subscriptionId: 11111111-1111-1111-1111-111111111111
     asserts:
@@ -31,7 +32,6 @@ tests:
   # cluster's CAPZ identity.
   - it: only observes the identity
     set:
-      enabled: true
       managementCluster: mymc
       capzIdentity.subscriptionId: 11111111-1111-1111-1111-111111111111
     asserts:
@@ -42,7 +42,6 @@ tests:
 
   - it: takes the subscription from the management cluster's AzureCluster
     set:
-      enabled: true
       managementCluster: mymc
     kubernetesProvider:
       scheme:
@@ -67,7 +66,6 @@ tests:
 
   - it: applies the overrides
     set:
-      enabled: true
       managementCluster: mymc
       providerConfigName: other-provider-config
       capzIdentity:
@@ -84,7 +82,6 @@ tests:
 
   - it: requires the management cluster name
     set:
-      enabled: true
       capzIdentity.subscriptionId: 11111111-1111-1111-1111-111111111111
     asserts:
       - failedTemplate:
@@ -92,7 +89,6 @@ tests:
 
   - it: fails when the subscription is neither set nor found
     set:
-      enabled: true
       managementCluster: mymc
     asserts:
       - failedTemplate:

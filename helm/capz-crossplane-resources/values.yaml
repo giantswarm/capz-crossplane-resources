@@ -1,7 +1,7 @@
 # This file is a Helm values file for the capz-crossplane-resources chart.
 
-# -- Render the chart's resources. They need Crossplane's Azure provider, which only CAPZ management clusters run, so the chart renders nothing unless this is `true`.
-enabled: false
+# -- Render the chart's resources. They need Crossplane's Azure provider, which only CAPZ management clusters run.
+enabled: true
 
 # -- Name of the management cluster. The CAPZ identity's resource group and name and the Crossplane Azure ProviderConfig default to it. Required when `enabled` is `true`.
 managementCluster: ""
