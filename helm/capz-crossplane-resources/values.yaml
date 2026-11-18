@@ -1,12 +1,20 @@
 # This file is a Helm values file for the capz-crossplane-resources chart.
-#
-# To learn more about how to configure your app on your cluster
-# and override the default values in here, visit:
-#
-#   https://docs.giantswarm.io/tutorials/fleet-management/app-platform/app-configuration/#basic-values-merging-example
-#
-image:
-  name: "giantswarm/capz-crossplane-resources"
-  tag: ""
-registry:
-  domain: gsoci.azurecr.io
+
+# -- Render the chart's resources. They need Crossplane's Azure provider, which only CAPZ management clusters run, so the chart renders nothing unless this is `true`.
+enabled: false
+
+# -- Name of the management cluster. The CAPZ identity's resource group and name and the Crossplane Azure ProviderConfig default to it. Required when `enabled` is `true`.
+managementCluster: ""
+
+# -- Name of the Crossplane Azure ProviderConfig the resources use. Defaults to `managementCluster`.
+providerConfigName: ""
+
+# The management cluster's CAPZ user-assigned managed identity, which the
+# chart observes as the Crossplane UserAssignedIdentity `capz`.
+capzIdentity:
+  # -- Azure subscription ID that holds the CAPZ identity. Defaults to `spec.subscriptionID` of the AzureCluster `org-giantswarm/<managementCluster>`.
+  subscriptionId: ""
+  # -- Resource group that holds the CAPZ identity. Defaults to `managementCluster`.
+  resourceGroup: ""
+  # -- Azure name of the CAPZ identity. Defaults to `<managementCluster>-capz`.
+  name: ""

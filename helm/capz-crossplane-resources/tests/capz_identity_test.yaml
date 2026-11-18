@@ -1,0 +1,99 @@
+suite: CAPZ identity
+templates:
+  - templates/capz-identity.yaml
+tests:
+  - it: renders nothing by default
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: observes the CAPZ identity of the management cluster
+    set:
+      enabled: true
+      managementCluster: mymc
+      capzIdentity.subscriptionId: 11111111-1111-1111-1111-111111111111
+    asserts:
+      - isKind:
+          of: UserAssignedIdentity
+      - isAPIVersion:
+          of: managedidentity.azure.upbound.io/v1beta1
+      - equal:
+          path: metadata.name
+          value: capz
+      - equal:
+          path: metadata.annotations["crossplane.io/external-name"]
+          value: /subscriptions/11111111-1111-1111-1111-111111111111/resourceGroups/mymc/providers/Microsoft.ManagedIdentity/userAssignedIdentities/mymc-capz
+      - equal:
+          path: spec.providerConfigRef.name
+          value: mymc
+
+  # Any other policy would let Crossplane change or delete the management
+  # cluster's CAPZ identity.
+  - it: only observes the identity
+    set:
+      enabled: true
+      managementCluster: mymc
+      capzIdentity.subscriptionId: 11111111-1111-1111-1111-111111111111
+    asserts:
+      - equal:
+          path: spec.managementPolicies
+          value:
+            - Observe
+
+  - it: takes the subscription from the management cluster's AzureCluster
+    set:
+      enabled: true
+      managementCluster: mymc
+    kubernetesProvider:
+      scheme:
+        "infrastructure.cluster.x-k8s.io/v1beta1/AzureCluster":
+          gvr:
+            group: infrastructure.cluster.x-k8s.io
+            version: v1beta1
+            resource: azureclusters
+          namespaced: true
+      objects:
+        - apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+          kind: AzureCluster
+          metadata:
+            name: mymc
+            namespace: org-giantswarm
+          spec:
+            subscriptionID: 22222222-2222-2222-2222-222222222222
+    asserts:
+      - equal:
+          path: metadata.annotations["crossplane.io/external-name"]
+          value: /subscriptions/22222222-2222-2222-2222-222222222222/resourceGroups/mymc/providers/Microsoft.ManagedIdentity/userAssignedIdentities/mymc-capz
+
+  - it: applies the overrides
+    set:
+      enabled: true
+      managementCluster: mymc
+      providerConfigName: other-provider-config
+      capzIdentity:
+        subscriptionId: 11111111-1111-1111-1111-111111111111
+        resourceGroup: other-rg
+        name: other-identity
+    asserts:
+      - equal:
+          path: metadata.annotations["crossplane.io/external-name"]
+          value: /subscriptions/11111111-1111-1111-1111-111111111111/resourceGroups/other-rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/other-identity
+      - equal:
+          path: spec.providerConfigRef.name
+          value: other-provider-config
+
+  - it: requires the management cluster name
+    set:
+      enabled: true
+      capzIdentity.subscriptionId: 11111111-1111-1111-1111-111111111111
+    asserts:
+      - failedTemplate:
+          errorPattern: managementCluster is required
+
+  - it: fails when the subscription is neither set nor found
+    set:
+      enabled: true
+      managementCluster: mymc
+    asserts:
+      - failedTemplate:
+          errorPattern: "capzIdentity.subscriptionId is required: the AzureCluster org-giantswarm/mymc doesn't exist or has no spec.subscriptionID"

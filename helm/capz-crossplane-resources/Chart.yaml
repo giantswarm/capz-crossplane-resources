@@ -9,28 +9,23 @@ appVersion: 0.0.1
 # Make sure your name DOES NOT end in "app" or "-app".
 name: capz-crossplane-resources
 
-# Please describe what the app provides in a sentence or two.
-description: Please add description
+description: Crossplane resources for CAPZ management clusters, such as an observe-only view of the management cluster's CAPZ identity.
 
 # URL of the GitHub repository that is the source of this Chart.yaml file.
 home: https://github.com/giantswarm/capz-crossplane-resources
-# Replace with 1-3 topical keywords, used for search in the catalog.
 keywords:
-  - "{KEYWORD}"
+  - crossplane
+  - azure
+  - capz
 
-# Default Giant Swarm icon, so that the first build passes the icon checks.
-# Replace it with the app's own icon: add it to https://github.com/giantswarm/web-assets
-# and set the final URL here.
-icon: https://s.giantswarm.io/app-icons/giantswarm/1/light.svg
+icon: https://s.giantswarm.io/app-icons/azure/1/light.svg
 
 sources:
-- https://github.com/some-org/some-repo
+- https://github.com/giantswarm/capz-crossplane-resources
 version: 0.0.0-dev
 annotations:
-  # Adapt to 'giantswarm' if this application is not to be deployed by customers
-  io.giantswarm.application.audience: all
-  # Adapt to 'true' if Giant Swarm takes responsibility for this app where it's deplyed
-  io.giantswarm.application.managed: "false"
+  io.giantswarm.application.audience: giantswarm
+  io.giantswarm.application.managed: "true"
   # Team owning this app, used through .Chart.Annotations in templates/_helpers.tpl.
   # phoenix is a placeholder for the team's short name, e.g. 'shield' for team-shield.
   io.giantswarm.application.team: "phoenix"
