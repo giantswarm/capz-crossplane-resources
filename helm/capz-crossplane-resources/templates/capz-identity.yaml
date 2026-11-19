@@ -15,6 +15,9 @@ spec:
   # this resource is deleted.
   managementPolicies:
     - Observe
+  # Observe already keeps Crossplane from deleting the identity; Orphan is a
+  # second guard should the management policies ever change.
+  deletionPolicy: Orphan
   forProvider: {}
   providerConfigRef:
     name: {{ .Values.providerConfigName | default (include "managementCluster" .) }}

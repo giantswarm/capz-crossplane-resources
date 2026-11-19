@@ -39,6 +39,9 @@ tests:
           path: spec.managementPolicies
           value:
             - Observe
+      - equal:
+          path: spec.deletionPolicy
+          value: Orphan
 
   - it: takes the subscription from the management cluster's AzureCluster
     set:
