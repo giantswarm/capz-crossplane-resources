@@ -1,93 +1,37 @@
 [![CircleCI](https://dl.circleci.com/status-badge/img/gh/giantswarm/capz-crossplane-resources/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/giantswarm/capz-crossplane-resources/tree/main)
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/giantswarm/capz-crossplane-resources/badge)](https://securityscorecards.dev/viewer/?uri=github.com/giantswarm/capz-crossplane-resources)
 
-[Guide about how to manage an app on Giant Swarm](https://handbook.giantswarm.io/docs/dev-and-releng/app-developer-processes/adding_app_to_appcatalog/)
+# capz-crossplane-resources
 
-## Creating a repository from this template
+A Helm chart of Crossplane resources that every CAPZ management cluster needs. It is deployed by the CAPZ
+collection of [management-cluster-bases](https://github.com/giantswarm/management-cluster-bases).
 
-A repository is created from this template by the repository set-up engine (`devctl`), which replaces the
-placeholders below, renames the chart directory `helm/capz-crossplane-resources` and pushes the result as the first commit. When
-copying by hand, rename the chart directory and replace them yourself
-(`devctl replace -i 'capz-crossplane-resources' <name> --ignore '.git/**' '**'`, likewise for the other two).
+## Resources
 
-| Placeholder | Where | Replaced with |
-|---|---|---|
-| `capz-crossplane-resources` | the chart directory `helm/capz-crossplane-resources`, `Chart.yaml`, `values.yaml`, `.abs/main.yaml`, `CHANGELOG.md`, this README | the repository name |
-| `phoenix` | the `io.giantswarm.application.team` annotation in `Chart.yaml` | the owning team's short name, e.g. `shield` for team-shield |
-| `https://github.com/giantswarm/capz-crossplane-resources` | this README | the upstream Helm repository the chart is based on |
+### The CAPZ identity
 
-The tokens are braced, unlike `REPOSITORY_NAME` in the Go service template: a Go module path may not contain
-braces, so that template's token is brace-less. The engine's replacement pass handles both forms, so a repository
-is created from either template the same way; only when copying by hand does the pattern differ (`capz-crossplane-resources`
-here, `REPOSITORY_NAME` there).
+The Crossplane `UserAssignedIdentity` `capz` observes the management cluster's CAPZ user-assigned managed identity
+(`<managementCluster>-capz` in the resource group `<managementCluster>`). It is observe-only
+(`managementPolicies: [Observe]`): Crossplane never changes or deletes the identity.
 
-The chart ships with the default Giant Swarm icon (`https://s.giantswarm.io/app-icons/giantswarm/1/light.svg`),
-so that the first build passes the icon checks. It is a default, not a placeholder: replace it with the app's
-own icon by adding it to [web-assets](https://github.com/giantswarm/web-assets) and setting the final URL as
-`icon` in `Chart.yaml`.
-
-Remove this section from the README of the created repository.
-
-# capz-crossplane-resources chart
-
-Giant Swarm offers a capz-crossplane-resources App which can be installed in workload clusters.
-Here, we define the capz-crossplane-resources chart with its templates and default configuration.
-
-**What is this app?**
-
-**Why did we add it?**
-
-**Who can use it?**
-
-## Installing
-
-There are several ways to install this app onto a workload cluster.
-
-- [Using GitOps to instantiate the App](https://docs.giantswarm.io/tutorials/continuous-deployment/apps/add-appcr/)
-- By creating an [App resource](https://docs.giantswarm.io/reference/platform-api/crd/apps.application.giantswarm.io) using the platform API as explained in [Getting started with App Platform](https://docs.giantswarm.io/tutorials/fleet-management/app-platform/).
+Its `status.atProvider.principalId` is the identity's object ID, which nothing else on the management cluster
+records. Workload cluster charts read it from there, for example [cluster-aks](https://github.com/giantswarm/cluster-aks)
+to grant the identity Azure RBAC roles on an AKS cluster.
 
 ## Configuring
 
-### values.yaml
-
-**This is an example of a values file you could upload using our web interface.**
-
-```yaml
-# values.yaml
-
-```
-
-### Sample App CR and ConfigMap for the management cluster
-
-If you have access to the Kubernetes API on the management cluster, you could create the App CR and ConfigMap directly.
-
-Here is an example that would install the app to workload cluster `abc12`:
+The chart's values are documented in [helm/capz-crossplane-resources/README.md](helm/capz-crossplane-resources/README.md).
+On a management cluster:
 
 ```yaml
-# appCR.yaml
-
+managementCluster: <codename>
 ```
 
-```yaml
-# user-values-configmap.yaml
+The subscription that holds the identity defaults to `spec.subscriptionID` of the management cluster's own
+`AzureCluster` `org-giantswarm/<managementCluster>`. Set `capzIdentity.subscriptionId` where that does not apply.
 
-```
+## Requirements
 
-See our [full reference on how to configure apps](https://docs.giantswarm.io/tutorials/fleet-management/app-platform/app-configuration/) for more details.
-
-## Compatibility
-
-This app has been tested to work with the following workload cluster release versions:
-
-- _add release version_
-
-## Limitations
-
-Some apps have restrictions on how they can be deployed.
-Not following these limitations will most likely result in a broken deployment.
-
-- _add limitation_
-
-## Credit
-
-- https://github.com/giantswarm/capz-crossplane-resources
+- Crossplane with the Upbound Azure provider family's `provider-azure-managedidentity`.
+- A Crossplane Azure `ProviderConfig` named after the management cluster (or set `providerConfigName`) whose
+  identity may read the CAPZ identity.

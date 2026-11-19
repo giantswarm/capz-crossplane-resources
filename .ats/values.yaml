@@ -1,0 +1,2 @@
+# Values for the ATS install on kind, which has no Crossplane CRDs.
+enabled: false

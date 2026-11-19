@@ -11,4 +11,6 @@
 # exists to upgrade from -- it needs --upgrade-tests-app-catalog-url or
 # --upgrade-tests-app-file, which a new repository has not got.
 app-tests-deploy-namespace: default
+# The kind cluster has no Crossplane, so the chart's resources are disabled.
+app-tests-app-config-file: .ats/values.yaml
 skip-steps: [functional, upgrade]

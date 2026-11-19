@@ -1,0 +1,21 @@
+{{- if .Values.enabled }}
+apiVersion: managedidentity.azure.upbound.io/v1beta1
+kind: UserAssignedIdentity
+metadata:
+  # Workload cluster charts (cluster-aks) look the identity up by this name to
+  # read its object ID from status.atProvider.principalId.
+  name: capz
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  annotations:
+    crossplane.io/external-name: {{ include "capzIdentity.resourceId" . }}
+spec:
+  # Observe only: the identity is created by the management cluster's
+  # bootstrap, and Crossplane must never change or delete it, not even when
+  # this resource is deleted.
+  managementPolicies:
+    - Observe
+  forProvider: {}
+  providerConfigRef:
+    name: {{ .Values.providerConfigName | default (include "managementCluster" .) }}
+{{- end }}

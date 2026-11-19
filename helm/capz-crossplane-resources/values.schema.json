@@ -10,6 +10,24 @@
             "type": "object",
             "additionalProperties": true
         },
+        "capzIdentity": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "Azure name of the CAPZ identity. Defaults to `<managementCluster>-capz`."
+                },
+                "resourceGroup": {
+                    "type": "string",
+                    "description": "Resource group that holds the CAPZ identity. Defaults to `managementCluster`."
+                },
+                "subscriptionId": {
+                    "type": "string",
+                    "description": "Azure subscription ID that holds the CAPZ identity. Defaults to `spec.subscriptionID` of the AzureCluster `org-giantswarm/<managementCluster>`."
+                }
+            }
+        },
         "chartOperator": {
             "type": "object",
             "additionalProperties": true
@@ -33,6 +51,10 @@
         },
         "clusterID": {
             "type": "string"
+        },
+        "enabled": {
+            "type": "boolean",
+            "description": "Render the chart's resources. They need Crossplane's Azure provider, which only CAPZ management clusters run."
         },
         "externalDNSIP": {
             "type": "string"
@@ -58,32 +80,16 @@
             "type": "object",
             "additionalProperties": true
         },
-        "image": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-                "name": {
-                    "type": "string"
-                },
-                "tag": {
-                    "type": "string"
-                }
-            }
-        },
         "managementCluster": {
-            "type": "string"
+            "type": "string",
+            "description": "Name of the management cluster. The CAPZ identity's resource group and name and the Crossplane Azure ProviderConfig default to it. Required when `enabled` is `true`."
         },
         "provider": {
             "type": "string"
         },
-        "registry": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-                "domain": {
-                    "type": "string"
-                }
-            }
+        "providerConfigName": {
+            "type": "string",
+            "description": "Name of the Crossplane Azure ProviderConfig the resources use. Defaults to `managementCluster`."
         },
         "subscriptionID": {
             "type": "string"
